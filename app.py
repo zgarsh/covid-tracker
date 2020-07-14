@@ -28,7 +28,6 @@ def zip_to_fips(zipcode):
     if zipcode:
         zipcode = int(zipcode)
     
-    # print(type(zipcode))
 
     fip = zips_and_fips.loc[zips_and_fips.ZIP == zipcode,'COUNTY'].values[0]
     print(fip)
@@ -141,19 +140,17 @@ def update_value(input_data):
         figure={
             'data': [
                 {
-                    'x': county_data.index,
+                    'x': county_data.date,
                     'y': county_data.cases,
                     'type': 'line',
-                    'name': input_data
+                    'name': county_name
                 },
             ],
             'layout': {
-                'title': input_data
+                'title': county_name + ' County'
             }
         }
     )
-
-    console.log('hi')
 
 
 if __name__ == '__main__':
