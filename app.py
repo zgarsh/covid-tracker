@@ -20,36 +20,51 @@ og_data = pd.read_csv('nyt-covid-7-8.csv')
 # Note that ~30% of counties are missing from NYT covid data!
 og_data['fullname'] = og_data['county'] + ' County, ' + og_data['state']
 
-def zip_to_fips(zipcode):
+# create list of county and state names for input dropdown
+all_fullnames = []
+for name in og_data['fullname'].unique():
+    dict_entry = {'label': name, 'value': name}
+    all_fullnames.append(dict_entry)
+
+# def zip_to_fips(zipcode):
     
-    # fip = zips_and_fips[zips_and_fips['ZIP'] == zipcode].iloc[0]['COUNTY']
+#     if zipcode:
+#         zipcode = int(zipcode)
 
-    # fip = zips_and_fips.loc[zips_and_fips.ZIP == zipcode,'COUNTY'].values[0]
+#     if len(str(zipcode)) > 4:
+#         fip = zips_and_fips.loc[zips_and_fips.ZIP == zipcode,'COUNTY'].values[0]
+        
+#     return fip
+
+# def get_county_data(my_fips):
+#     my_data = og_data[og_data.fips == my_fips]
     
-    if zipcode:
-        zipcode = int(zipcode)
+#     county_name = my_data['fullname'].unique()
     
-
-    if len(str(zipcode)) > 4:
-        fip = zips_and_fips.loc[zips_and_fips.ZIP == zipcode,'COUNTY'].values[0]
-        print(fip)
-
-    # fip = zips_and_fips[zips_and_fips.ZIP == zipcode].COUNTY.item()
-
-    # zips_dict = zips_and_fips.set_index('ZIP').T.to_dict('list')
-
-    # mydict = {
-    #     '94022' : 6075,
-    #     '94114' : 6075
-    # }
-
-    # return 6075
-    return fip
-
-def get_county_data(my_fips):
-    my_data = og_data[og_data.fips == my_fips]
+#     if len(county_name) > 1:
+#         raise ValueError('something is wrong - found more than one matching county')
     
-    county_name = my_data['fullname'].unique()
+#     my_filtered_data = my_data[['date', 'cases', 'deaths']]
+    
+    
+#     return {
+#         'county': county_name[0],
+#         'data': my_filtered_data
+#     }
+
+# def zip_to_data(zip_code):
+#     """Returns dict with two values: 'county' has the name of the county, 'data' has a df with
+#     date, cases to date, and deaths to date"""
+    
+#     fips = zip_to_fips(zip_code)
+#     data = get_county_data(fips)
+    
+#     return data
+
+def get_county_data_from_name(fullname):
+    my_data = og_data[og_data.fullname == fullname]
+    
+    county_name = my_data['county'].unique()
     
     if len(county_name) > 1:
         raise ValueError('something is wrong - found more than one matching county')
@@ -57,28 +72,15 @@ def get_county_data(my_fips):
     my_filtered_data = my_data[['date', 'cases', 'deaths']]
     
     
-    return {
-        'county': county_name[0],
-        'data': my_filtered_data
-    }
-
-def zip_to_data(zip_code):
-    """Returns dict with two values: 'county' has the name of the county, 'data' has a df with
-    date, cases to date, and deaths to date"""
-    
-    fips = zip_to_fips(zip_code)
-    data = get_county_data(fips)
-    
-    return data
-
-zip_code = 94114
-
-result = zip_to_data(zip_code)
-county_name = result['county']
-county_data = result['data']
+    return my_filtered_data
 
 
 
+# zip_code = 94114
+
+# result = zip_to_data(zip_code)
+# county_name = result['county']
+# county_data = result['data']
 
 
 def generate_table(dataframe, max_rows=10):
@@ -93,38 +95,20 @@ def generate_table(dataframe, max_rows=10):
         ])
     ])
 
-
-# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
-# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
 app.layout = html.Div(children=[
     html.H1(children='COVID-19 cases reported to date'),
 
     html.Div(children='''
-        Enter your zip code.
+        Enter your county.
     '''),
 
-    dcc.Input(id='input', value='', type='text'),
+    dcc.Dropdown(
+        id='input',
+        options= all_fullnames,
+        multi=False
+    ),
 
     html.Div(id='output-graph'),
-
-    # dcc.Graph(
-    #     id='example-graph',
-    #     figure={
-    #         'data': [
-    #             {
-    #                 'x': county_data.index,
-    #                 'y': county_data.cases,
-    #                 'type': 'line',
-    #                 'name': county_name
-    #             },
-    #         ],
-    #         'layout': {
-    #             'title': county_name + ' County'
-    #         }
-    #     }
-    # )
 ])
 
 @app.callback(
@@ -133,23 +117,23 @@ app.layout = html.Div(children=[
 )
 def update_value(input_data):
     
-    result = zip_to_data(input_data)
-    county_name = result['county']
-    county_data = result['data'] 
+    result = get_county_data_from_name(input_data)
+    # county_name = result['county']
+    # county_data = result['data'] 
 
     return dcc.Graph(
         id='example-graph',
         figure={
             'data': [
                 {
-                    'x': county_data.date,
-                    'y': county_data.cases,
+                    'x': result.date,
+                    'y': result.cases,
                     'type': 'line',
-                    'name': county_name
+                    'name': input_data
                 },
             ],
             'layout': {
-                'title': county_name
+                'title': input_data
             }
         }
     )
