@@ -16,7 +16,7 @@ app.logger.info('hillooo')
 # NYT: https://github.com/nytimes/covid-19-data/blob/master/us-counties.csv
 
 zips_and_fips = pd.read_csv('zip-to-fips.csv')
-og_data = pd.read_csv('nyt-covid-7-8.csv')
+og_data = pd.read_csv('nyt-covid-7-14.csv')
 # Note that ~30% of counties are missing from NYT covid data!
 og_data['fullname'] = og_data['county'] + ' County, ' + og_data['state']
 
@@ -98,9 +98,9 @@ def generate_table(dataframe, max_rows=10):
 app.layout = html.Div(children=[
     html.H1(children='COVID-19 cases reported to date'),
 
-    html.Div(children='''
-        Enter your county.
-    '''),
+    # html.Div(children='''
+    #     Enter your county.
+    # '''),
 
     dcc.Dropdown(
         id='input',
