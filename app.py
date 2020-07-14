@@ -18,6 +18,7 @@ app.logger.info('hillooo')
 zips_and_fips = pd.read_csv('zip-to-fips.csv')
 og_data = pd.read_csv('nyt-covid-7-8.csv')
 # Note that ~30% of counties are missing from NYT covid data!
+og_data['fullname'] = og_data['county'] + ' County, ' + og_data['state']
 
 def zip_to_fips(zipcode):
     
@@ -29,8 +30,9 @@ def zip_to_fips(zipcode):
         zipcode = int(zipcode)
     
 
-    fip = zips_and_fips.loc[zips_and_fips.ZIP == zipcode,'COUNTY'].values[0]
-    print(fip)
+    if len(str(zipcode)) > 4:
+        fip = zips_and_fips.loc[zips_and_fips.ZIP == zipcode,'COUNTY'].values[0]
+        print(fip)
 
     # fip = zips_and_fips[zips_and_fips.ZIP == zipcode].COUNTY.item()
 
@@ -47,7 +49,7 @@ def zip_to_fips(zipcode):
 def get_county_data(my_fips):
     my_data = og_data[og_data.fips == my_fips]
     
-    county_name = my_data['county'].unique()
+    county_name = my_data['fullname'].unique()
     
     if len(county_name) > 1:
         raise ValueError('something is wrong - found more than one matching county')
@@ -147,7 +149,7 @@ def update_value(input_data):
                 },
             ],
             'layout': {
-                'title': county_name + ' County'
+                'title': county_name
             }
         }
     )
