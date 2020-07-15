@@ -96,7 +96,7 @@ def generate_table(dataframe, max_rows=10):
     ])
 
 app.layout = html.Div(children=[
-    html.H1(children='COVID-19 cases reported to date'),
+    html.H2(children='COVID-19 cases reported to date'),
 
     # html.Div(children='''
     #     Enter your county.
