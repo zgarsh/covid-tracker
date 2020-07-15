@@ -8,8 +8,7 @@ import pandas as pd
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
-app.logger.info('hillooo')
+server = app.server
 
 # Get data - covid info from NYT and zip code to county code (FIP) mapping from HUD
 # HUD: https://www.huduser.gov/portal/datasets/usps_crosswalk.html
