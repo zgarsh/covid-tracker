@@ -25,40 +25,6 @@ for name in og_data['fullname'].unique():
     dict_entry = {'label': name, 'value': name}
     all_fullnames.append(dict_entry)
 
-# def zip_to_fips(zipcode):
-    
-#     if zipcode:
-#         zipcode = int(zipcode)
-
-#     if len(str(zipcode)) > 4:
-#         fip = zips_and_fips.loc[zips_and_fips.ZIP == zipcode,'COUNTY'].values[0]
-        
-#     return fip
-
-# def get_county_data(my_fips):
-#     my_data = og_data[og_data.fips == my_fips]
-    
-#     county_name = my_data['fullname'].unique()
-    
-#     if len(county_name) > 1:
-#         raise ValueError('something is wrong - found more than one matching county')
-    
-#     my_filtered_data = my_data[['date', 'cases', 'deaths']]
-    
-    
-#     return {
-#         'county': county_name[0],
-#         'data': my_filtered_data
-#     }
-
-# def zip_to_data(zip_code):
-#     """Returns dict with two values: 'county' has the name of the county, 'data' has a df with
-#     date, cases to date, and deaths to date"""
-    
-#     fips = zip_to_fips(zip_code)
-#     data = get_county_data(fips)
-    
-#     return data
 
 def get_county_data_from_name(fullname):
     my_data = og_data[og_data.fullname == fullname]
@@ -72,14 +38,6 @@ def get_county_data_from_name(fullname):
     
     
     return my_filtered_data
-
-
-
-# zip_code = 94114
-
-# result = zip_to_data(zip_code)
-# county_name = result['county']
-# county_data = result['data']
 
 
 def generate_table(dataframe, max_rows=10):
@@ -108,6 +66,10 @@ app.layout = html.Div(children=[
     ),
 
     html.Div(id='output-graph'),
+
+    html.Div(children='''
+        Data from The New York Times, based on reports from state and local health agencies. 
+    ''')
 ])
 
 @app.callback(
