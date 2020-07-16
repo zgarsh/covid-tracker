@@ -68,8 +68,10 @@ app.layout = html.Div(children=[
     html.Div(id='output-graph'),
 
     html.Div(children='''
-        Data from The New York Times, based on reports from state and local health agencies. 
-    ''')
+        Data courtesy of The New York Times, based on reports from state and local health agencies. 
+    '''),
+
+    dcc.Link('NYT Covid tracking page', href='https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html.')
 ])
 
 @app.callback(
