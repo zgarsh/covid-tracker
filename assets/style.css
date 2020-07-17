@@ -1,0 +1,32 @@
+body {
+    font-family: sans-serif;
+    color: black;
+    background-color: white;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: black;
+    text-align: center;
+    padding: 20px;
+}
+
+#input{
+    width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+    /* padding: 20px; */
+}
+
+#output-graph{
+    background-color: gray;
+}
+
+#last-updated{
+    color: hotpink;
+    margin: 10px;
+    text-align: center
+}
+
+#source{
+    margin: 10px;
+    text-align: center
+}

@@ -5,9 +5,10 @@ from dash.dependencies import Input, Output
 import pandas as pd
 
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__)
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 # Get data - covid info from NYT and zip code to county code (FIP) mapping from HUD
@@ -55,6 +56,8 @@ def get_more_details_from_name(fullname):
 
 
 app.layout = html.Div(children=[
+
+
     html.H5(children='Choose your county'),
 
     dcc.Dropdown(
@@ -67,7 +70,9 @@ app.layout = html.Div(children=[
 
     html.Div(id='last-updated'),
 
-    html.Div('Data courtesy of The New York Times, based on reports from state and local health agencies.')
+    html.Div(id='source',
+        children=['Data courtesy of The New York Times, based on reports from state and local health agencies.']
+    )
 
  ])
 
@@ -91,7 +96,9 @@ def update_value(input_data):
                 },
             ],
             'layout': {
-                'title': 'Covid-19 cases in ' + input_data
+                'title': 'Covid-19 cases in ' + input_data,
+                'plot_bgcolor': 'light-gray',
+                'paper_bgcolor': 'light-gray'
             }
         }
     )
