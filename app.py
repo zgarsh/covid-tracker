@@ -58,7 +58,7 @@ def get_more_details_from_name(fullname):
 app.layout = html.Div(children=[
 
 
-    html.H5(children='Choose your county'),
+    html.H6(children='Choose your county'),
 
     dcc.Dropdown(
         id='input',
