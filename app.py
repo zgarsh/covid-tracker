@@ -95,11 +95,11 @@ def update_value(input_data):
                     'x': result.date,
                     'y': result.cases_diff_rolling_avg,
                     'type': 'bar',
-                    'name': 'Covid-19 cases in ' + input_data
+                    'name': '7-day avg new cases per day in ' + input_data
                 },
             ],
             'layout': {
-                'title': 'Covid-19 cases in ' + input_data,
+                'title': '7-day avg new cases per day in ' + input_data,
                 'plot_bgcolor': 'light-gray',
                 'paper_bgcolor': 'light-gray'
             }
