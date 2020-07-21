@@ -22,6 +22,9 @@ og_data = pd.read_csv('nyt-covid-data.csv')
 # Add new column to df with <county name> County, <state name>
 og_data['fullname'] = og_data['county'] + ' County, ' + og_data['state']
 
+# Add new column for daily case count diff
+og_data['cases_diff'] = og_data['cases'].diff()
+
 # create list of county and state name dicts for input dropdown
 all_fullnames = []
 for name in og_data['fullname'].unique():
@@ -33,13 +36,10 @@ def get_county_data_from_name(fullname):
     """using fullname from input, pull data from og_data and return a new df with date, cases, deaths for that county"""
     my_data = og_data[og_data.fullname == fullname]
     
-    county_name = my_data['county'].unique()
+    my_filtered_data = my_data[['date', 'cases', 'deaths']].copy()
     
-    if len(county_name) > 1:
-        raise ValueError('something is wrong - found more than one matching county')
-    
-    my_filtered_data = my_data[['date', 'cases', 'deaths']]
-    
+#     Add column for cases diff per day
+    my_filtered_data['cases_diff'] = my_filtered_data['cases'].diff()
     
     return my_filtered_data
 
@@ -90,7 +90,7 @@ def update_value(input_data):
             'data': [
                 {
                     'x': result.date,
-                    'y': result.cases,
+                    'y': result.cases_diff,
                     'type': 'bar',
                     'name': 'Covid-19 cases in ' + input_data
                 },
