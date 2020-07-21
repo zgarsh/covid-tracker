@@ -41,6 +41,9 @@ def get_county_data_from_name(fullname):
 #     Add column for cases diff per day
     my_filtered_data['cases_diff'] = my_filtered_data['cases'].diff()
     
+#     Add column for 7-day rolling average cases per day
+    my_filtered_data['cases_diff_rolling_avg'] = my_filtered_data['cases_diff'].rolling(window=7).mean()
+    
     return my_filtered_data
 
 
@@ -90,7 +93,7 @@ def update_value(input_data):
             'data': [
                 {
                     'x': result.date,
-                    'y': result.cases_diff,
+                    'y': result.cases_diff_rolling_avg,
                     'type': 'bar',
                     'name': 'Covid-19 cases in ' + input_data
                 },
