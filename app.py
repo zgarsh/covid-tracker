@@ -52,10 +52,10 @@ def get_more_details_from_name(fullname):
     my_data = og_data[og_data.fullname == fullname]
 
     most_recent_date = my_data['date'].max()
-#     deaths = my_data[my_data.date == most_recent_date]['deaths'].item()
+    deaths = my_data[my_data.date == most_recent_date]['deaths'].item()
     cases = my_data[my_data.date == most_recent_date]['cases'].item()
 
-    return(most_recent_date, cases)
+    return(most_recent_date, cases, deaths)
 
 
 app.layout = html.Div(children=[
@@ -70,6 +70,16 @@ app.layout = html.Div(children=[
     ),
 
     html.Div(id='output-graph'),
+
+    # html.Div(id='cases-to-date'),
+
+    html.Div(id='bucket',
+        children = [
+            html.Div(id='deaths-to-date'),
+            html.Div(id='cases-to-date')
+        ]),
+
+    # html.Div(id='deaths-to-date'),
 
     html.Div(id='last-updated'),
 
@@ -107,17 +117,40 @@ def update_value(input_data):
     )
 
 @app.callback(
+    Output(component_id='cases-to-date', component_property='children'),
+    [Input(component_id='input', component_property='value')]
+)
+def update_other_values(input_data):
+
+    total_cases = get_more_details_from_name(input_data)[1]
+
+    text = 'total cases: ' + f'{total_cases:,}'
+
+    return text
+
+@app.callback(
+    Output(component_id='deaths-to-date', component_property='children'),
+    [Input(component_id='input', component_property='value')]
+)
+def update_other_values(input_data):
+
+    deaths = get_more_details_from_name(input_data)[2]
+
+    text = 'total deaths: ' + f'{deaths:,}'
+
+    return text
+
+@app.callback(
     Output(component_id='last-updated', component_property='children'),
     [Input(component_id='input', component_property='value')]
 )
 def update_other_values(input_data):
 
-    most_recent_date, total_cases = get_more_details_from_name(input_data)
+    most_recent_date = get_more_details_from_name(input_data)[0]
 
     text = 'last updated ' + most_recent_date 
 
     return text
-
 
 
 if __name__ == '__main__':
