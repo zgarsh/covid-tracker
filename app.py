@@ -3,21 +3,19 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import pandas as pd
+import numpy as np
 
 
-# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app = dash.Dash(__name__)
-
 server = app.server
 
 # Get data - covid info from NYT and zip code to county code (FIP) mapping from HUD
 # HUD: https://www.huduser.gov/portal/datasets/usps_crosswalk.html
 # NYT: https://github.com/nytimes/covid-19-data/blob/master/us-counties.csv
 
-zips_and_fips = pd.read_csv('zip-to-fips.csv')
 og_data = pd.read_csv('nyt-covid-data.csv')
-# Note that ~30% of counties are missing from NYT covid data!
+populations = pd.read_csv('census_populations.csv')
+populations.fips = pd.to_numeric(populations.fips, errors='coerce').fillna(0).astype(np.int64)
 
 # Add new column to df with <county name> County, <state name>
 og_data['fullname'] = og_data['county'] + ' County, ' + og_data['state']
@@ -57,6 +55,16 @@ def get_more_details_from_name(fullname):
 
     return(most_recent_date, cases, deaths)
 
+def get_cases_per_capita(fullname):
+    
+    fips = int(og_data[og_data.fullname == fullname]['fips'].iloc[1])
+    pop = populations[populations['fips'] == fips]['population'].iloc[0]
+    cases = og_data[og_data.fullname == fullname].iloc[-1]['cases']
+    
+    return cases/pop
+
+
+
 
 app.layout = html.Div(children=[
 
@@ -75,8 +83,9 @@ app.layout = html.Div(children=[
 
     html.Div(id='bucket',
         children = [
+            html.Div(id='cases-to-date'),
             html.Div(id='deaths-to-date'),
-            html.Div(id='cases-to-date')
+            html.Div(id='cases-per-capita')
         ]),
 
     # html.Div(id='deaths-to-date'),
@@ -137,6 +146,18 @@ def update_other_values(input_data):
     deaths = get_more_details_from_name(input_data)[2]
 
     text = 'total deaths: ' + f'{deaths:,}'
+
+    return text
+
+@app.callback(
+    Output(component_id='cases-per-capita', component_property='children'),
+    [Input(component_id='input', component_property='value')]
+)
+def update_other_values(input_data):
+
+    cases_per_capita = get_cases_per_capita(input_data)
+
+    text = 'cases per capita: ' + str(round(cases_per_capita, 3))
 
     return text
 

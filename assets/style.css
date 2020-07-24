@@ -44,7 +44,7 @@ h6 { font-size: 1.5rem; line-height: 1.6;  letter-spacing: 0; margin-bottom: 2re
     /* border-color: black; */
 }
 
-#deaths-to-date, #cases-to-date{
+#deaths-to-date, #cases-to-date, #cases-per-capita{
     font-size: 20px;
     padding: 1rem;
     text-align: center;
