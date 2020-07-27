@@ -57,8 +57,13 @@ def get_more_details_from_name(fullname):
 
 def get_cases_per_capita(fullname):
     
-    fips = int(og_data[og_data.fullname == fullname]['fips'].iloc[1])
-    pop = populations[populations['fips'] == fips]['population'].iloc[0]
+    # NYT data for NYC is for all five boroughs, yet NYC county is just manhattan. Pop should instead reference all boroughs
+    
+    if fullname == "New York City County, New York":
+        pop = 8336817
+    else:
+        fips = int(og_data[og_data.fullname == fullname]['fips'].iloc[1])
+        pop = populations[populations['fips'] == fips]['population'].iloc[0]
     cases = og_data[og_data.fullname == fullname].iloc[-1]['cases']
     
     return cases/pop
@@ -154,6 +159,11 @@ def update_other_values(input_data):
     [Input(component_id='input', component_property='value')]
 )
 def update_other_values(input_data):
+
+    # NYT does not have discrete COVD data for the following counties since Joplin and Kansas City
+    # overlap, and NYC data is provided across all boroughs while the county is only Manhattan
+    if input_data in ['Joplin County, Missouri', 'Kansas City County, Missouri']:
+        return "cases per capita: could not calculate"
 
     cases_per_capita = get_cases_per_capita(input_data)
 
